@@ -28,7 +28,7 @@ int main(void)
 
     // check type by number length and starting characters
     string cc_type = get_type(cc_num);
-    if (cc_tpye != INVALID)
+    if (cc_type != INVALID)
     {
         bool cc_valid = is_valid(cc_num);
         if (cc_valid)
