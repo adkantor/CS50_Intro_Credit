@@ -20,33 +20,37 @@ const string INVALID = "INVALID";
 int main(void)
 {
     long cc_num;
-    do
-    {
-        cc_num = get_long("Credit card number: \n");
-    }
-    while (cc_num < pow(10, 12) || cc_num > pow(10, 16)); // ensure cc_num has 13 - 16 digits
 
-    // check type by number length and starting characters
+    // get user input
+    cc_num = get_long("Credit card number: \n");
+
+    // get issuer by digit count and starting digits
     string cc_type = get_type(cc_num);
     if (cc_type != INVALID)
     {
+        // validate number via Luhns's Algorithm
         bool cc_valid = is_valid(cc_num);
         if (cc_valid)
         {
-            printf("%s\n", cc_type);
+            printf("%s\n", cc_type); // if valid, print issuer name
         }
         else
         {
-            printf("%s\n", INVALID);
+            printf("%s\n", INVALID); // else print Invalid
         }
     }
     else
     {
-        printf("%s\n", INVALID);
+        printf("%s\n", INVALID); // if issuer not identified, then print Invalid
     }
 
 }
 
+/*
+    Gets type (issuer name).
+    @param cc_num   credit card number
+    @return         issuer name or "INVALID"
+*/
 string get_type(long cc_num)
 {
     if (is_amex(cc_num))
@@ -67,6 +71,11 @@ string get_type(long cc_num)
     }
 }
 
+/*
+    Checks whether credit card issuer is Amex, by checking digit count and starting digit(s).
+    @param cc_num   credit card number
+    @return         bool
+*/
 bool is_amex(long cc_num)
 {
     if (cc_num >= 34 * pow(10, 13) && (cc_num <= 35 * pow(10, 13) - 1))     // 15 digits starting with 34
@@ -83,6 +92,11 @@ bool is_amex(long cc_num)
     }
 }
 
+/*
+    Checks whether credit card issuer is MasterCard, by checking digit count and starting digit(s).
+    @param cc_num   credit card number
+    @return         bool
+*/
 bool is_mc(long cc_num)
 {
     if (cc_num >= 51 * pow(10, 14) && (cc_num <= 52 * pow(10, 14) - 1))     // 16 digits starting with 51
@@ -111,6 +125,11 @@ bool is_mc(long cc_num)
     }
 }
 
+/*
+    Checks whether credit card issuer is Visa, by checking digit count and starting digit(s).
+    @param cc_num   credit card number
+    @return         bool
+*/
 bool is_visa(long cc_num)
 {
     if (cc_num >= 4 * pow(10, 12) && (cc_num <= 5 * pow(10, 12) - 1))     // 13 digits starting with 4
@@ -127,6 +146,11 @@ bool is_visa(long cc_num)
     }
 }
 
+/*
+    Checks credit card validity via Luhn's Algorithm.
+    @param cc_num   credit card number
+    @return         bool
+*/
 bool is_valid(long cc_num)
 {
     int sum = 0;
@@ -134,19 +158,25 @@ bool is_valid(long cc_num)
     int digit_count = number_of_digits(cc_num);
     for (int n = 2; n <= digit_count; n += 2)
     {
-        digit = nthdigit(cc_num, n - 1); // get every second digit
+        digit = nthdigit(cc_num, n - 1); // get every second digit, righ-to-left, starting with second digit
         int digit_times_two = 2 * digit; // multiply by 2
         int sum_digits = sum_of_digits(digit_times_two); // get sum of digits
-        sum = sum + sum_digits;
+        sum = sum + sum_digits; // add up sum of digits
     }
     for (int n = 1; n <= digit_count; n += 2)
     {
-        digit = nthdigit(cc_num, n - 1); // get every second digit
-        sum = sum + digit;
+        digit = nthdigit(cc_num, n - 1); // get every second digit, righ-to-left, starting with first digit
+        sum = sum + digit; // add sum of digits together
     }
-    return (sum % 10 == 0); // true if divisible by 10
+    return (sum % 10 == 0); // valid if divisible by 10 (sum ends with 0)
 }
 
+/*
+    Returns n-th digit of a number, right to left. Zero based (rightmost digit is 0th).
+    @param x        number too look in
+    @param n        zero based index
+    @return         n-th digit (integer)
+*/
 int nthdigit(long x, int n)
 {
     while (n--)
@@ -161,6 +191,11 @@ int number_of_digits(long x)
     return (x == 0) ? 1  : (log10(x) + 1);
 }
 
+/*
+    Returns number of digits in a number.
+    @param x        number too look in
+    @return         digit count
+*/
 int sum_of_digits(int x)
 {
     int sum = 0, m;
